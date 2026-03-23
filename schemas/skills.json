@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Roland Skills Configuration",
+  "type": "object",
+  "properties": {
+    "$schema": { "type": "string" },
+    "skills": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "location": { "type": "string", "description": "Absolute path to skill directory" },
+          "personas": { "type": "array", "items": { "type": "string" }, "description": "Persona names for auto-injection" },
+          "task_types": { "type": "array", "items": { "type": "string" }, "description": "Task types for auto-injection" },
+          "tags": { "type": "array", "items": { "type": "string" }, "description": "Labels/tags for auto-injection" },
+          "version": { "type": "string", "description": "Skill version for compatibility tracking" }
+        },
+        "required": ["location"]
+      }
+    }
+  }
+}
