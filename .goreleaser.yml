@@ -1,0 +1,47 @@
+version: 2
+
+builds:
+  - main: ./cmd/roland
+    binary: roland
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+      - linux
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ignore:
+      - goos: windows
+        goarch: arm64
+
+archives:
+  - format: tar.gz
+    name_template: "roland_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    format_overrides:
+      - goos: windows
+        format: zip
+
+checksum:
+  name_template: "checksums.txt"
+
+brews:
+  - repository:
+      owner: e1sidy
+      name: homebrew-tap
+    directory: Formula
+    homepage: https://github.com/e1sidy/roland
+    description: AI agent workspace orchestrator
+    license: MIT
+    dependencies:
+      - name: e1sidy/tap/slate
+    install: |
+      bin.install "roland"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
