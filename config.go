@@ -29,8 +29,26 @@ type Config struct {
 	// Hooks controls which hooks are enabled. Key is hook name.
 	Hooks map[string]bool `yaml:"hooks"`
 
+	// CustomHooks holds user-defined hooks. Key is hook name.
+	CustomHooks map[string]*CustomHookDef `yaml:"custom_hooks"`
+
 	// Home is the resolved ROLAND_HOME path. Not persisted to YAML.
 	Home string `yaml:"-"`
+}
+
+// CustomHookDef defines a user-created hook stored in roland.yaml.
+type CustomHookDef struct {
+	// Event is the agent event trigger (e.g., "SessionStart", "PreToolUse").
+	Event string `yaml:"event"`
+
+	// Script is the path to the bash script to execute.
+	Script string `yaml:"script"`
+
+	// Matcher filters which tool triggers this hook ("*" = all).
+	Matcher string `yaml:"matcher"`
+
+	// Timeout in seconds. 0 = default (10s).
+	Timeout int `yaml:"timeout"`
 }
 
 // RepoConfig holds per-repository configuration.
@@ -58,9 +76,10 @@ func DefaultConfig() *Config {
 			AgentClaude:   {"--dangerously-skip-permissions"},
 			AgentOpenCode: {},
 		},
-		IDE:   IDECursor,
-		Repos: make(map[string]*RepoConfig),
-		Hooks: make(map[string]bool),
+		IDE:         IDECursor,
+		Repos:       make(map[string]*RepoConfig),
+		Hooks:       make(map[string]bool),
+		CustomHooks: make(map[string]*CustomHookDef),
 	}
 }
 
@@ -163,6 +182,9 @@ func LoadConfig(home string) (*Config, error) {
 	}
 	if cfg.Hooks == nil {
 		cfg.Hooks = make(map[string]bool)
+	}
+	if cfg.CustomHooks == nil {
+		cfg.CustomHooks = make(map[string]*CustomHookDef)
 	}
 
 	return cfg, nil

@@ -72,6 +72,47 @@ func TestSaveAndLoadConfig(t *testing.T) {
 	}
 }
 
+func TestSaveAndLoadConfig_CustomHooks(t *testing.T) {
+	home := t.TempDir()
+	cfg := DefaultConfig()
+	cfg.Home = home
+	cfg.CustomHooks["my-hook"] = &CustomHookDef{
+		Event:   "SessionStart",
+		Script:  "/path/to/my-hook.sh",
+		Matcher: "Bash",
+		Timeout: 5,
+	}
+	cfg.Hooks["my-hook"] = true
+
+	if err := SaveConfig(cfg); err != nil {
+		t.Fatalf("SaveConfig: %v", err)
+	}
+
+	loaded, err := LoadConfig(home)
+	if err != nil {
+		t.Fatalf("LoadConfig: %v", err)
+	}
+	ch, ok := loaded.CustomHooks["my-hook"]
+	if !ok {
+		t.Fatal("custom hook not in loaded config")
+	}
+	if ch.Event != "SessionStart" {
+		t.Errorf("event = %q, want SessionStart", ch.Event)
+	}
+	if ch.Script != "/path/to/my-hook.sh" {
+		t.Errorf("script = %q", ch.Script)
+	}
+	if ch.Matcher != "Bash" {
+		t.Errorf("matcher = %q", ch.Matcher)
+	}
+	if ch.Timeout != 5 {
+		t.Errorf("timeout = %d, want 5", ch.Timeout)
+	}
+	if !loaded.Hooks["my-hook"] {
+		t.Error("custom hook should be enabled")
+	}
+}
+
 func TestLoadConfig_InvalidAgent(t *testing.T) {
 	home := t.TempDir()
 	// Write config with invalid agent.

@@ -70,3 +70,48 @@ func DefaultRegistry() *Registry {
 	}
 	return reg
 }
+
+// RegisterCustom adds a user-defined hook to the registry.
+// If a hook with the same name already exists, it is replaced (custom overrides built-in).
+func (r *Registry) RegisterCustom(h *Hook) {
+	r.hooks[h.Name] = h
+}
+
+// CustomHookDef mirrors the config definition for use in hook creation.
+// This avoids importing the root roland package (circular dependency).
+type CustomHookDef struct {
+	Event   string
+	Script  string
+	Matcher string
+	Timeout int
+}
+
+// RegisterCustomHooks adds user-defined hooks from config to the registry.
+func (r *Registry) RegisterCustomHooks(customHooks map[string]*CustomHookDef) {
+	for name, def := range customHooks {
+		r.RegisterCustom(newCustomHook(name, def))
+	}
+}
+
+// newCustomHook creates a Hook from a custom definition.
+func newCustomHook(name string, def *CustomHookDef) *Hook {
+	sp := def.Script // capture for closures
+	n := name
+	matcher := def.Matcher
+	if matcher == "" {
+		matcher = "*"
+	}
+	return &Hook{
+		Name:    name,
+		Source:  SourceHome,
+		Event:   def.Event,
+		Matcher: matcher,
+		Timeout: def.Timeout,
+		ClaudeScript: func(ctx HookContext) string {
+			return "#!/bin/bash\nbash " + sp + "\n"
+		},
+		OpenCodeSnippet: func(ctx HookContext) string {
+			return jsDynamicSnippet(n, "bash "+sp)
+		},
+	}
+}

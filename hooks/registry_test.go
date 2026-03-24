@@ -76,6 +76,71 @@ func TestNames(t *testing.T) {
 	}
 }
 
+func TestRegisterCustom_OverridesBuiltin(t *testing.T) {
+	reg := DefaultRegistry()
+	// Override a built-in hook.
+	custom := &Hook{Name: "slate-instructions", Source: SourceHome, Event: "SessionStart"}
+	reg.RegisterCustom(custom)
+
+	h := reg.Get("slate-instructions")
+	if h != custom {
+		t.Error("RegisterCustom should override existing hook")
+	}
+	// Count should remain the same (replaced, not added).
+	if len(reg.All()) != 5 {
+		t.Errorf("All() = %d after override, want 5", len(reg.All()))
+	}
+}
+
+func TestRegisterCustomHooks(t *testing.T) {
+	reg := DefaultRegistry()
+	customDefs := map[string]*CustomHookDef{
+		"my-hook": {
+			Event:   "SessionStart",
+			Script:  "/path/to/my-hook.sh",
+			Matcher: "Bash",
+			Timeout: 5,
+		},
+		"another": {
+			Event:  "PreCompact",
+			Script: "/path/to/another.sh",
+		},
+	}
+	reg.RegisterCustomHooks(customDefs)
+
+	// Should have 5 built-in + 2 custom = 7.
+	if len(reg.All()) != 7 {
+		t.Fatalf("All() = %d, want 7", len(reg.All()))
+	}
+
+	h := reg.Get("my-hook")
+	if h == nil {
+		t.Fatal("my-hook not found")
+	}
+	if h.Event != "SessionStart" {
+		t.Errorf("event = %q, want SessionStart", h.Event)
+	}
+	if h.Matcher != "Bash" {
+		t.Errorf("matcher = %q, want Bash", h.Matcher)
+	}
+	if h.Timeout != 5 {
+		t.Errorf("timeout = %d, want 5", h.Timeout)
+	}
+
+	// Verify script content.
+	ctx := HookContext{RolandHome: "/tmp"}
+	content := h.ClaudeScript(ctx)
+	if content == "" {
+		t.Error("ClaudeScript returned empty")
+	}
+
+	// Default matcher for another.
+	h2 := reg.Get("another")
+	if h2.Matcher != "*" {
+		t.Errorf("default matcher = %q, want *", h2.Matcher)
+	}
+}
+
 func TestDefaultRegistry(t *testing.T) {
 	reg := DefaultRegistry()
 	all := reg.All()
