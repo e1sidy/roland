@@ -1,5 +1,5 @@
-# Binaries
-roland
+# Binaries (only the root-level binary, not cmd/roland/ directory)
+/roland
 *.exe
 
 # IDE
