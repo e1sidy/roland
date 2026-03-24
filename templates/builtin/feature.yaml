@@ -1,0 +1,25 @@
+name: feature
+description: Standard feature development — research, implement, review, ship
+vars:
+  - name: title
+    required: true
+tasks:
+  - id: research
+    title: "Research: <<.title>>"
+    type: task
+    persona: researcher
+  - id: implement
+    title: "Implement: <<.title>>"
+    type: feature
+    persona: builder
+    deps: [research]
+  - id: review
+    title: "Review: <<.title>>"
+    type: task
+    persona: reviewer
+    deps: [implement]
+  - id: ship
+    title: "Ship: <<.title>>"
+    type: chore
+    persona: builder
+    deps: [review]

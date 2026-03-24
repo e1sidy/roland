@@ -1,0 +1,20 @@
+name: code-review
+description: Code review workflow — review, feedback, verify
+vars:
+  - name: title
+    required: true
+tasks:
+  - id: review
+    title: "Review: <<.title>>"
+    type: task
+    persona: reviewer
+  - id: feedback
+    title: "Address feedback: <<.title>>"
+    type: task
+    persona: builder
+    deps: [review]
+  - id: verify
+    title: "Verify: <<.title>>"
+    type: task
+    persona: reviewer
+    deps: [feedback]

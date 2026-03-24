@@ -1,0 +1,25 @@
+name: bug-fix
+description: Standard bug fix workflow — reproduce, fix, test, review
+vars:
+  - name: title
+    required: true
+tasks:
+  - id: reproduce
+    title: "Reproduce: <<.title>>"
+    type: bug
+    persona: researcher
+  - id: fix
+    title: "Fix: <<.title>>"
+    type: bug
+    persona: builder
+    deps: [reproduce]
+  - id: test
+    title: "Test: <<.title>>"
+    type: task
+    persona: builder
+    deps: [fix]
+  - id: review
+    title: "Review: <<.title>>"
+    type: task
+    persona: reviewer
+    deps: [test]

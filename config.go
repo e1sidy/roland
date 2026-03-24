@@ -32,8 +32,22 @@ type Config struct {
 	// CustomHooks holds user-defined hooks. Key is hook name.
 	CustomHooks map[string]*CustomHookDef `yaml:"custom_hooks"`
 
+	// ContextBudget is the max token budget for context injection (default: 4096).
+	ContextBudget int `yaml:"context_budget"`
+
+	// AutoCheckpoint controls auto-checkpoint on PreCompact (default: true).
+	AutoCheckpoint *bool `yaml:"auto_checkpoint"`
+
 	// Home is the resolved ROLAND_HOME path. Not persisted to YAML.
 	Home string `yaml:"-"`
+}
+
+// IsAutoCheckpointEnabled returns whether auto-checkpoint is enabled (default: true).
+func (c *Config) IsAutoCheckpointEnabled() bool {
+	if c.AutoCheckpoint == nil {
+		return true
+	}
+	return *c.AutoCheckpoint
 }
 
 // CustomHookDef defines a user-created hook stored in roland.yaml.
@@ -78,8 +92,9 @@ func DefaultConfig() *Config {
 		},
 		IDE:         IDECursor,
 		Repos:       make(map[string]*RepoConfig),
-		Hooks:       make(map[string]bool),
-		CustomHooks: make(map[string]*CustomHookDef),
+		Hooks:         make(map[string]bool),
+		CustomHooks:   make(map[string]*CustomHookDef),
+		ContextBudget: 4096,
 	}
 }
 

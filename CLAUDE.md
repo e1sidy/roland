@@ -24,8 +24,11 @@ roland/
 ├── schemas/             # JSON schemas (skills.json)
 ├── skill/               # Skill system (registry, matching, injection)
 ├── workspace/           # Task dirs + git worktree management
+├── learning/            # Learning engine (pattern extraction, calibration, decisions)
+├── templates/           # Task templates (YAML-based, 5 built-ins)
+│   └── builtin/         # Embedded template YAML files
 ├── roland.go            # AgentTool, IDE types, Version
-├── config.go            # Config, ResolveHome, LoadConfig, SaveConfig
+├── config.go            # Config, ResolveHome, LoadConfig, SaveConfig (+ context_budget, auto_checkpoint)
 ├── repo.go              # AddRepo, RemoveRepo, SyncRepo
 ├── attrs.go             # EnsureAttrs (Roland custom attributes in Slate)
 └── go.mod

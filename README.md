@@ -15,6 +15,13 @@ Roland manages the full lifecycle of agent-driven development: **pickup** a task
 - **Session continuity** — `work` command shows latest checkpoint and git status for seamless resumption
 - **Multi-agent support** — Claude Code and OpenCode, with per-agent flags
 - **Quality gates** — optional `--require-review` blocks shipping until review is approved
+- **Learning engine** — extracts recurring patterns from completed tasks, enriches personas over time
+- **Estimation calibration** — compares estimates vs actuals, surfaces accuracy insights
+- **Decision library** — searchable index of all decisions from checkpoints
+- **Multi-agent delegation** — `delegate` subtasks, `watch` progress, `handoff` between personas
+- **Task templates** — 5 built-in templates (bug-fix, feature, refactor, code-review, incident-response)
+- **Context budget** — token-aware context injection with priority ordering
+- **Auto-checkpoint** — captures git state before context compaction
 
 ## Quick Start
 
@@ -79,6 +86,9 @@ roland clean --dry-run         # Preview orphaned workspace cleanup
 | [Configuration](docs/configuration.md) | `roland.yaml`, environment variables, agent flags |
 | [Concepts](docs/concepts.md) | Workspaces, worktrees, personas, hooks, skills |
 | [SDK Reference](docs/sdk-reference.md) | Public Go API documentation |
+| [Learning Engine](docs/learning.md) | Pattern extraction, calibration, decision library |
+| [Multi-Agent](docs/multi-agent.md) | Delegate, watch, handoff workflows |
+| [Templates](docs/templates.md) | Task templates, built-ins, decompose |
 
 ## Build from Source
 

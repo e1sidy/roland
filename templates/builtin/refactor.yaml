@@ -1,0 +1,25 @@
+name: refactor
+description: Code refactoring — analyze, refactor, test, review
+vars:
+  - name: title
+    required: true
+tasks:
+  - id: analyze
+    title: "Analyze: <<.title>>"
+    type: task
+    persona: researcher
+  - id: refactor
+    title: "Refactor: <<.title>>"
+    type: chore
+    persona: builder
+    deps: [analyze]
+  - id: test
+    title: "Test: <<.title>>"
+    type: task
+    persona: builder
+    deps: [refactor]
+  - id: review
+    title: "Review: <<.title>>"
+    type: task
+    persona: reviewer
+    deps: [test]

@@ -868,3 +868,136 @@ source <(roland completion bash)
 roland completion zsh > "${fpath[1]}/_roland"
 roland completion fish | source
 ```
+
+---
+
+## Learning
+
+### roland learn
+
+Extract patterns from completed tasks to improve personas.
+
+```
+roland learn [flags]
+```
+
+| Flag | Type | Default | Description |
+|------|------|---------|-------------|
+| `--since` | string | — | Only tasks closed after this date (YYYY-MM-DD) |
+| `--persona` | string | — | Filter by persona |
+| `--show` | string | — | Show current learnings for a persona |
+| `--reset` | string | — | Reset learnings for a persona |
+| `--calibration` | bool | false | Show estimation calibration report |
+| `--type` | string | — | Filter calibration by task type (with --calibration) |
+
+---
+
+### roland decisions
+
+Browse and search the decision library.
+
+```
+roland decisions [flags]
+```
+
+| Flag | Type | Default | Description |
+|------|------|---------|-------------|
+| `--search` | string | — | Search by keyword |
+| `--persona` | string | — | Filter by persona |
+| `--task` | string | — | Filter by task ID |
+| `--rebuild` | bool | false | Rebuild index from checkpoints |
+| `--json` | bool | false | Output as JSON |
+
+---
+
+## Multi-Agent
+
+### roland delegate
+
+Delegate a subtask to a persona (background launch).
+
+```
+roland delegate <subtask-id> [flags]
+```
+
+| Flag | Type | Default | Description |
+|------|------|---------|-------------|
+| `--persona` | string | builder | Persona for the delegated agent |
+| `--repos` | string | — | Comma-separated repo names |
+
+---
+
+### roland watch
+
+Monitor child task status changes.
+
+```
+roland watch [task-id] [flags]
+```
+
+| Flag | Type | Default | Description |
+|------|------|---------|-------------|
+| `--interval` | string | 5m | Polling interval |
+| `--stale` | int | 30 | Alert after N minutes without checkpoint |
+
+---
+
+### roland handoff
+
+Transfer a task to a different persona.
+
+```
+roland handoff <task-id> [flags]
+```
+
+| Flag | Type | Default | Description |
+|------|------|---------|-------------|
+| `--to` | string | — | Target persona (required) |
+
+---
+
+## Templates
+
+### roland template list
+
+List available templates (built-in + custom).
+
+```
+roland template list
+```
+
+### roland template show
+
+Show template structure.
+
+```
+roland template show <name>
+```
+
+### roland template apply
+
+Apply a template to create a task tree.
+
+```
+roland template apply <name> [flags]
+```
+
+| Flag | Type | Default | Description |
+|------|------|---------|-------------|
+| `--var` | string[] | — | Template variable (key=value, repeatable) |
+
+### roland template create
+
+Create a template from a completed epic.
+
+```
+roland template create <epic-id>
+```
+
+### roland template decompose
+
+Suggest subtask structure based on similar completed epics.
+
+```
+roland template decompose <task-id>
+```

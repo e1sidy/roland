@@ -1,0 +1,27 @@
+name: incident-response
+description: Incident response — triage, fix, RCA, preventive measures
+vars:
+  - name: title
+    required: true
+tasks:
+  - id: triage
+    title: "Triage: <<.title>>"
+    type: bug
+    priority: 0
+    persona: researcher
+  - id: fix
+    title: "Fix: <<.title>>"
+    type: bug
+    priority: 0
+    persona: builder
+    deps: [triage]
+  - id: rca
+    title: "RCA: <<.title>>"
+    type: task
+    persona: researcher
+    deps: [fix]
+  - id: preventive
+    title: "Preventive: <<.title>>"
+    type: chore
+    persona: builder
+    deps: [rca]
