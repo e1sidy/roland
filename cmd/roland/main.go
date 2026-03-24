@@ -80,6 +80,7 @@ hooks, skills, and workspace isolation via git worktrees.`,
 		watchCmd(),
 		handoffCmd(),
 		templateCmd(),
+		pipelineCmd(),
 	)
 
 	return cmd

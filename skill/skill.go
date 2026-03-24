@@ -27,6 +27,9 @@ type SkillEntry struct {
 
 	// Version tracks the skill version for compatibility checks.
 	Version string `json:"version,omitempty"`
+
+	// Source is the git URL the skill was installed from (empty for local skills).
+	Source string `json:"source,omitempty"`
 }
 
 // SkillConfig holds the skill registry.

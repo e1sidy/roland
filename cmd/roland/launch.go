@@ -25,6 +25,10 @@ func launchAgent(dir string, agent roland.AgentTool, flags []string) error {
 	switch agent {
 	case roland.AgentClaude:
 		argv = append(argv, "--dir", dir)
+	case roland.AgentCodex:
+		argv = append(argv, "--cwd", dir)
+	case roland.AgentGemini:
+		argv = append(argv, "--project-dir", dir)
 	default:
 		// Generic: just use the directory as cwd (set via env).
 	}

@@ -14,10 +14,12 @@ type AgentTool string
 const (
 	AgentClaude   AgentTool = "claude"
 	AgentOpenCode AgentTool = "opencode"
+	AgentCodex    AgentTool = "codex"
+	AgentGemini   AgentTool = "gemini"
 )
 
 // validAgents lists all supported agent tools.
-var validAgents = []AgentTool{AgentClaude, AgentOpenCode}
+var validAgents = []AgentTool{AgentClaude, AgentOpenCode, AgentCodex, AgentGemini}
 
 // IsValid returns true if the agent tool is recognized.
 func (a AgentTool) IsValid() bool {
@@ -36,6 +38,10 @@ func (a AgentTool) Command() string {
 		return "claude"
 	case AgentOpenCode:
 		return "opencode"
+	case AgentCodex:
+		return "codex"
+	case AgentGemini:
+		return "gemini"
 	default:
 		return string(a)
 	}

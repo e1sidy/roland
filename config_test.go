@@ -232,8 +232,8 @@ func TestIDE_IsValid(t *testing.T) {
 
 func TestValidAgentNames(t *testing.T) {
 	names := ValidAgentNames()
-	if len(names) != 2 {
-		t.Errorf("len(ValidAgentNames()) = %d, want 2", len(names))
+	if len(names) != 4 {
+		t.Errorf("len(ValidAgentNames()) = %d, want 4", len(names))
 	}
 }
 

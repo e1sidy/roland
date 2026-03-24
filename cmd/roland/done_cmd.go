@@ -112,6 +112,14 @@ Use --dry-run to see what would happen without making changes.`,
 				if err := workspace.WorktreeRemove(cfg.Home, wt.repoName, wt.branch); err != nil {
 					fmt.Fprintf(os.Stderr, "Warning: failed to remove worktree %s/%s: %v\n", wt.repoName, wt.branch, err)
 				}
+
+				// Delete remote branch if configured.
+				if cfg.CleanupRemoteBranches && wt.branch != "" {
+					fmt.Printf("Deleting remote branch %s...\n", wt.branch)
+					if err := gitutil.Run(wt.target, "push", "origin", "--delete", wt.branch); err != nil {
+						fmt.Fprintf(os.Stderr, "Warning: failed to delete remote branch %s: %v\n", wt.branch, err)
+					}
+				}
 			}
 
 			// Remove workspace.

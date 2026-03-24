@@ -38,6 +38,12 @@ type Config struct {
 	// AutoCheckpoint controls auto-checkpoint on PreCompact (default: true).
 	AutoCheckpoint *bool `yaml:"auto_checkpoint"`
 
+	// CleanupRemoteBranches deletes remote branches on `roland done` (default: false).
+	CleanupRemoteBranches bool `yaml:"cleanup_remote_branches"`
+
+	// ConfigVersion tracks the config schema version for migration (default: 1).
+	ConfigVersion int `yaml:"config_version"`
+
 	// Home is the resolved ROLAND_HOME path. Not persisted to YAML.
 	Home string `yaml:"-"`
 }
@@ -80,6 +86,10 @@ type RepoConfig struct {
 	// PostSetup is an optional script to run after worktree creation
 	// (e.g., npm install, poetry install).
 	PostSetup string `yaml:"post_setup"`
+
+	// PRTemplate is the path to a PR body template file.
+	// Template variables: {id}, {title}, {description}, {checkpoint}, {branch}, {priority}.
+	PRTemplate string `yaml:"pr_template"`
 }
 
 // DefaultConfig returns a Config with sensible defaults.
@@ -89,12 +99,15 @@ func DefaultConfig() *Config {
 		AgentFlags: map[AgentTool][]string{
 			AgentClaude:   {"--dangerously-skip-permissions"},
 			AgentOpenCode: {},
+			AgentCodex:    {},
+			AgentGemini:   {},
 		},
 		IDE:         IDECursor,
 		Repos:       make(map[string]*RepoConfig),
 		Hooks:         make(map[string]bool),
 		CustomHooks:   make(map[string]*CustomHookDef),
 		ContextBudget: 4096,
+		ConfigVersion: 1,
 	}
 }
 
@@ -202,7 +215,30 @@ func LoadConfig(home string) (*Config, error) {
 		cfg.CustomHooks = make(map[string]*CustomHookDef)
 	}
 
+	// Config migration: upgrade old configs to current version.
+	if cfg.ConfigVersion < 1 {
+		migrateConfig(cfg)
+	}
+
 	return cfg, nil
+}
+
+// migrateConfig applies migration steps to bring old configs up to date.
+func migrateConfig(cfg *Config) {
+	// v0 → v1: add new agent flags, context_budget default.
+	if _, ok := cfg.AgentFlags[AgentCodex]; !ok {
+		cfg.AgentFlags[AgentCodex] = []string{}
+	}
+	if _, ok := cfg.AgentFlags[AgentGemini]; !ok {
+		cfg.AgentFlags[AgentGemini] = []string{}
+	}
+	if cfg.ContextBudget <= 0 {
+		cfg.ContextBudget = 4096
+	}
+	cfg.ConfigVersion = 1
+
+	// Auto-save migrated config.
+	SaveConfig(cfg)
 }
 
 // SaveConfig writes the config to roland.yaml.

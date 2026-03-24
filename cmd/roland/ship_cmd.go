@@ -123,6 +123,13 @@ Use --require-review to block shipping if review_status is not approved.`,
 				}
 				prBody := body
 				if prBody == "" {
+					// Try PR template from repo config.
+					rc := cfg.Repos[repoName]
+					if rc != nil && rc.PRTemplate != "" {
+						prBody = renderPRTemplate(rc.PRTemplate, taskID, branch)
+					}
+				}
+				if prBody == "" {
 					prBody = fmt.Sprintf("Task: %s\nBranch: %s\n\nCreated by Roland.", taskID, branch)
 				}
 
@@ -169,4 +176,40 @@ Use --require-review to block shipping if review_status is not approved.`,
 	cmd.Flags().BoolVar(&requireReview, "require-review", false, "Block shipping unless review_status is approved")
 
 	return cmd
+}
+
+// renderPRTemplate loads and renders a PR template file with task variables.
+func renderPRTemplate(templatePath, taskID, branch string) string {
+	data, err := os.ReadFile(templatePath)
+	if err != nil {
+		return "" // fallback to default
+	}
+
+	// Fetch task details if store is available.
+	taskTitle, taskDesc, taskPriority, cpText := taskID, "", "", ""
+	store, err := openSlateStore(cfg)
+	if err == nil {
+		ctx := context.Background()
+		task, terr := store.GetFull(ctx, taskID)
+		if terr == nil {
+			taskTitle = task.Title
+			taskDesc = task.Description
+			taskPriority = task.Priority.String()
+		}
+		cp, cerr := store.LatestCheckpoint(ctx, taskID)
+		if cerr == nil && cp != nil {
+			cpText = cp.Done
+		}
+		store.Close()
+	}
+
+	r := strings.NewReplacer(
+		"{id}", taskID,
+		"{title}", taskTitle,
+		"{description}", taskDesc,
+		"{checkpoint}", cpText,
+		"{branch}", branch,
+		"{priority}", taskPriority,
+	)
+	return r.Replace(string(data))
 }
