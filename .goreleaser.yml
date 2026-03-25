@@ -6,7 +6,7 @@ builds:
     env:
       - CGO_ENABLED=0
     ldflags:
-      - -s -w -X main.Version={{.Version}}
+      - -s -w -X github.com/e1sidy/roland.Version={{.Version}}
     goos:
       - darwin
       - linux
