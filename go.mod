@@ -3,7 +3,7 @@ module github.com/e1sidy/roland
 go 1.25.0
 
 require (
-	github.com/e1sidy/slate v0.1.0
+	github.com/e1sidy/slate v0.2.0
 	github.com/spf13/cobra v1.10.2
 	gopkg.in/yaml.v3 v3.0.1
 )
@@ -23,5 +23,3 @@ require (
 	modernc.org/memory v1.11.0 // indirect
 	modernc.org/sqlite v1.47.0 // indirect
 )
-
-replace github.com/e1sidy/slate => ../slate
