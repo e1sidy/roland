@@ -12,3 +12,4 @@
 # Test
 *.test
 coverage.out
+dist/

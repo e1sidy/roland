@@ -3,7 +3,7 @@ module github.com/e1sidy/roland
 go 1.25.0
 
 require (
-	github.com/e1sidy/slate v0.2.0
+	github.com/e1sidy/slate v0.3.0
 	github.com/spf13/cobra v1.10.2
 	gopkg.in/yaml.v3 v3.0.1
 )
